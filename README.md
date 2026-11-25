@@ -9,17 +9,17 @@
 ## 📚 笔记目录（`notes/`）
 
 ### 基础篇：Token、API 与产业观察
-1. [第一篇：Token、上下文窗口、上限归属与速率限流](notes/第一篇：Token、上下文窗口、上限归属与速率限流.md)
+1. [Token、上下文窗口、上限归属与速率限流](notes/Token、上下文窗口、上限归属与速率限流.md)
 2. [一文看懂大模型速率 - Rate Limit, Speed, Price 是怎么影响你账单的](notes/一文看懂大模型速率%20-%20Rate%20Limit,%20Speed,%20Price%20是怎么影响你账单的.md)
 3. [API 与产品的区别](notes/API%20与产品的区别.md)
-4. [第二篇：🧠 AI 进阶通识：从开源权重、Meta Muse 到 API 与限流机制](notes/第二篇：🧠%20AI%20进阶通识：从开源权重、Meta%20Muse%20到%20API%20与限流机制.md)
-5. [第二篇独立进阶笔记](notes/第二篇独立进阶笔记.md)
+4. [AI 进阶通识：从开源权重、Meta Muse 到 API 与限流机制](notes/AI%20进阶通识：从开源权重、Meta%20Muse%20到%20API%20与限流机制.md)
+5. [AI 进阶通识：从 Meta Muse、开源生态到 API 与产品的幕后博弈](notes/AI%20进阶通识：从%20Meta%20Muse、开源生态到%20API%20与产品的幕后博弈.md)
 6. [AI 时代，软件行业定规则的人为什么换成了华人面孔？](notes/AI%20时代，软件行业定规则的人为什么换成了华人面孔？.md)
 
 ### Agent 篇：核心引擎与扩展能力
 7. [LLM Fundamental - LLM Inference](notes/LLM%20Fundamental%20-%20LLM%20Inference.md) · [🎮 交互图解](demos/llm-inference.html)
-8. [LLM fundamental - ReAct Loop：AI Agent 的底层心脏](notes/LLM%20fundamental%20-%20ReAct%20Loop：AI%20Agent%20的底层心脏.md) · [🎮 交互模拟器](demos/react-loop.html)
-9. [LLM fundamental - 让 AI Agent 真正变强的三件套：RAG、MCP 与 Subagent](notes/LLM%20fundamental%20-%20让%20AI%20Agent%20真正变强的三件套：RAG、MCP%20与%20Subagent.md) · [🎮 交互实验室](demos/agent-tools.html)
+8. [LLM Fundamental - ReAct Loop：AI Agent 的底层心脏](notes/LLM%20Fundamental%20-%20ReAct%20Loop：AI%20Agent%20的底层心脏.md) · [🎮 交互模拟器](demos/react-loop.html)
+9. [LLM Fundamental - 让 AI Agent 真正变强的三件套：RAG、MCP 与 Subagent](notes/LLM%20Fundamental%20-%20让%20AI%20Agent%20真正变强的三件套：RAG、MCP%20与%20Subagent.md) · [🎮 交互实验室](demos/agent-tools.html)
 
 ### 工程实战篇：跨设备与跨 Agent 协作
 10. [跨设备跨 Agent 的知识库工程化编排方案](notes/跨设备跨%20Agent%20的知识库工程化编排方案.md) · [🛠️ 新电脑恢复指南](SETUP.md)
