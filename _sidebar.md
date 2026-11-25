@@ -13,6 +13,10 @@
   - [08 · ReAct Loop：Agent 的底层心脏](notes/LLM%20fundamental%20-%20ReAct%20Loop：AI%20Agent%20的底层心脏.md)
   - [09 · RAG、MCP 与 Subagent](notes/LLM%20fundamental%20-%20让%20AI%20Agent%20真正变强的三件套：RAG、MCP%20与%20Subagent.md)
 
+- **工程实战篇：跨设备与跨 Agent 协作**
+  - [10 · 跨设备跨 Agent 的知识库编排方案](notes/跨设备跨%20Agent%20的知识库工程化编排方案.md)
+  - [🛠️ 新电脑 / 新 Agent 恢复指南](SETUP.md)
+
 - **独立交互实验室**
   - [🎮 LLM Inference 图解](demos/llm-inference.html ':ignore')
   - [🎮 ReAct Loop 模拟器](demos/react-loop.html ':ignore')
