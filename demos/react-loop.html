@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReAct Loop 交互式模拟器</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f8fafc;
+      --border: #e2e8f0;
+      --fg: #0f172a;
+      --muted: #64748b;
+      --primary: #0f766e;
+      --primary-fg: #ffffff;
+      --sec: #f1f5f9;
+      --sec-fg: #1e293b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --border: #334155;
+        --fg: #f8fafc;
+        --muted: #94a3b8;
+        --primary: #2dd4bf;
+        --primary-fg: #0f172a;
+        --sec: #0f172a;
+        --sec-fg: #e2e8f0;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .topbar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    .btn-group { display: flex; align-items: center; gap: 6px; }
+    button {
+      font-family: inherit; font-size: 12px; padding: 6px 10px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--card); color: var(--fg);
+      cursor: pointer; transition: all 0.15s;
+    }
+    button:hover:not(:disabled) { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    button.active, button.primary {
+      background: var(--primary); color: var(--primary-fg); border-color: transparent; font-weight: 600;
+    }
+    .badge { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); margin-right: 4px; }
+    .nodes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+    .node {
+      padding: 10px 6px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card); opacity: 0.65; transition: all 0.2s;
+    }
+    .node.active {
+      opacity: 1; border: 2px solid var(--primary); background: var(--sec);
+    }
+    .node-title { font-size: 12px; font-weight: 700; }
+    .node-sub { font-size: 12px; color: var(--muted); }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .cols { grid-template-columns: 1fr; } .nodes { grid-template-columns: repeat(2, 1fr); } }
+    .panel {
+      padding: 14px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card); display: flex; flex-direction: column; gap: 8px;
+    }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; }
+    .tag {
+      font-family: ui-monospace, monospace; font-size: 12px; font-weight: 700;
+      padding: 2px 8px; border-radius: 6px; background: var(--sec); color: var(--sec-fg);
+    }
+    .muted { font-size: 12px; color: var(--muted); }
+    .step-title { font-size: 15px; font-weight: 700; }
+    .step-desc { font-size: 13px; color: var(--muted); margin: 0; }
+    .bar-bg { width: 100%; height: 6px; border-radius: 999px; background: var(--sec); overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
+    .msg-list {
+      display: flex; flex-direction: column; gap: 4px; max-height: 150px;
+      overflow-y: auto; font-family: ui-monospace, monospace; font-size: 12px;
+    }
+    .msg-item {
+      padding: 5px 8px; border-radius: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      color: var(--muted);
+    }
+    .msg-item.user { background: var(--sec); color: var(--sec-fg); }
+    .msg-item.last { border: 1px solid var(--primary); background: var(--sec); color: var(--fg); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="btn-group">
+        <button id="sc-code" onclick="setScenario('code')">🛠️ 修代码 Bug</button>
+        <button id="sc-weather" onclick="setScenario('weather')">🌤️ 查天气穿衣</button>
+      </div>
+      <div class="btn-group">
+        <span id="step-badge" class="badge">0 / 6</span>
+        <button onclick="resetSim()">重置</button>
+        <button id="btn-prev" onclick="prevStep()">上一步</button>
+        <button id="btn-next" class="primary" onclick="nextStep()">下一步 ▶</button>
+      </div>
+    </div>
+
+    <div class="nodes">
+      <div id="node-thought" class="node"><div class="node-title">1. Thought</div><div class="node-sub">思考决策</div></div>
+      <div id="node-action" class="node"><div class="node-title">2. Action</div><div class="node-sub">调用工具</div></div>
+      <div id="node-obs" class="node"><div class="node-title">3. Observation</div><div class="node-sub">观察结果 ↩</div></div>
+      <div id="node-answer" class="node"><div class="node-title">4. Answer</div><div class="node-sub">输出答案</div></div>
+    </div>
+
+    <div class="cols">
+      <div class="panel">
+        <div class="panel-head">
+          <span id="cur-tag" class="tag">准备开始</span>
+          <span id="cur-who" class="muted">等待触发</span>
+        </div>
+        <div id="cur-title" class="step-title">点击「下一步 ▶」看 ReAct 怎么转起来</div>
+        <p id="cur-desc" class="step-desc">
+          用户发出需求后，大模型不是直接瞎猜，而是进入一个 while 循环：先想、再调工具、看工具返回、再想……直到有把握才回答。
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span style="font-size:12px;font-weight:700;">上下文黑板 (messages[])</span>
+          <span id="tok-count" class="badge" style="margin:0;">~80 tokens</span>
+        </div>
+        <div class="bar-bg"><div id="tok-bar" class="bar-fill" style="width:10%"></div></div>
+        <div id="msg-list" class="msg-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCENARIOS = {
+      code: {
+        userPrompt: '[user] 登录接口报 500，帮我修好',
+        steps: [
+          { node: 'thought', tag: 'Thought · 第1轮', who: '🧠 大模型推理', title: '“我没看到代码，先去读报错日志”', desc: '模型发现自己不知道具体哪里报错，决定不瞎猜，先向程序请求调用读日志工具。', msg: '[assistant] Thought: 先查看 error.log 定位异常', tokens: 180 },
+          { node: 'action', tag: 'Action · 第1轮', who: '🔧 程序执行工具', title: '调用 read_file("error.log")', desc: '客户端收到模型的工具调用指令，真正在本地磁盘读取日志文件。', msg: '[tool_call] read_file("error.log")', tokens: 240 },
+          { node: 'obs', tag: 'Observation · 第1轮', who: '👀 真实结果返回', title: '拿到报错：auth.py 第18行 KeyError: "token"', desc: '工具把真实报错塞回上下文黑板。注意：这一步之后循环还没结束，程序把结果喂回给模型！', msg: '[tool_result] auth.py:18 KeyError: "token"', tokens: 420 },
+          { node: 'thought', tag: 'Thought · 第2轮', who: '🧠 大模型再推理', title: '“找到行号了！用 .get() 判空并跑测试验证”', desc: '模型结合刚才看到的 Observation，决定修改 auth.py 并运行 pytest 确认。', msg: '[assistant] Thought: 修复 auth.py 并运行测试', tokens: 560 },
+          { node: 'action', tag: 'Action + Obs · 第2轮', who: '🔧 改文件 + 跑测试', title: 'edit_file → run_test → Observation: 12 passed', desc: '修改文件并运行测试，拿到「全部通过」的真实反馈。现在事实已验证，可以结束循环。', msg: '[tool_result] pytest: 12 passed, 0 failed', tokens: 790 },
+          { node: 'answer', tag: 'Final Answer', who: '✅ 退出 while 循环', title: '“已修复 auth.py 第 18 行，12 项测试全部通过”', desc: '模型不再发起工具调用，while 循环终止，把经过验证的最终结果回答给用户。', msg: '[assistant] 登录 500 已修复，测试全部通过。', tokens: 860 }
+        ]
+      },
+      weather: {
+        userPrompt: '[user] 北京今天出门要带伞吗？穿什么？',
+        steps: [
+          { node: 'thought', tag: 'Thought · 第1轮', who: '🧠 大模型推理', title: '“训练数据里没有今天天气，得联网查”', desc: '模型判断这是实时信息，必须调用外部天气 API，不能靠记忆编造。', msg: '[assistant] Thought: 需要查询北京今日实时天气', tokens: 150 },
+          { node: 'action', tag: 'Action · 第1轮', who: '🔧 程序执行工具', title: '调用 get_weather(city="Beijing")', desc: '外层程序替模型去请求天气接口，模型自己此时处于等待状态。', msg: '[tool_call] get_weather(city="Beijing")', tokens: 210 },
+          { node: 'obs', tag: 'Observation · 第1轮', who: '👀 真实结果返回', title: '接口返回：12°C，小雨转阴，东北风 4 级', desc: '真实天气数据被追加到上下文黑板，再一次发给模型。', msg: '[tool_result] 12°C, 小雨转阴, 东北风4级', tokens: 340 },
+          { node: 'thought', tag: 'Thought · 第2轮', who: '🧠 大模型再推理', title: '“温度和降雨信息都齐了，不需要再调工具”', desc: '模型检查 Observation：有气温(12°C)、有降水(小雨)、有风力(4级)，信息充足！', msg: '[assistant] Thought: 信息完整，可以给出穿衣和带伞建议', tokens: 460 },
+          { node: 'answer', tag: 'Final Answer', who: '✅ 退出 while 循环', title: '“今天北京 12°C 有小雨，记得带伞，建议穿防风外套”', desc: '循环结束！注意刚才每一步的对话都留在了黑板上，所以一轮 Agent 任务会比普通聊天消耗更多 token。', msg: '[assistant] 今天北京12°C有小雨，建议带伞穿防风外套。', tokens: 550 }
+        ]
+      }
+    };
+
+    let currentScenario = 'code';
+    let stepIndex = 0;
+
+    function setScenario(name) { currentScenario = name; stepIndex = 0; render(); }
+    function nextStep() { if (stepIndex < SCENARIOS[currentScenario].steps.length) { stepIndex++; render(); } }
+    function prevStep() { if (stepIndex > 0) { stepIndex--; render(); } }
+    function resetSim() { stepIndex = 0; render(); }
+
+    function render() {
+      const sc = SCENARIOS[currentScenario];
+      const total = sc.steps.length;
+
+      document.getElementById('sc-code').className = currentScenario === 'code' ? 'active' : '';
+      document.getElementById('sc-weather').className = currentScenario === 'weather' ? 'active' : '';
+      document.getElementById('step-badge').textContent = `${stepIndex} / ${total}`;
+      document.getElementById('btn-prev').disabled = stepIndex === 0;
+      document.getElementById('btn-next').disabled = stepIndex === total;
+
+      const activeNode = stepIndex > 0 ? sc.steps[stepIndex - 1].node : null;
+      ['thought', 'action', 'obs', 'answer'].forEach(n => {
+        document.getElementById('node-' + n).className = n === activeNode ? 'node active' : 'node';
+      });
+
+      if (stepIndex === 0) {
+        document.getElementById('cur-tag').textContent = '准备开始';
+        document.getElementById('cur-who').textContent = '等待触发';
+        document.getElementById('cur-title').textContent = '点击「下一步 ▶」看 ReAct 怎么转起来';
+        document.getElementById('cur-desc').textContent = '用户发出需求后，大模型不是直接瞎猜，而是进入一个 while 循环：先想、再调工具、看工具返回、再想……直到有把握才回答。';
+      } else {
+        const s = sc.steps[stepIndex - 1];
+        document.getElementById('cur-tag').textContent = s.tag;
+        document.getElementById('cur-who').textContent = s.who;
+        document.getElementById('cur-title').textContent = s.title;
+        document.getElementById('cur-desc').textContent = s.desc;
+      }
+
+      const listEl = document.getElementById('msg-list');
+      let html = `<div class="msg-item user">${sc.userPrompt}</div>`;
+      let curTokens = 80;
+      for (let i = 0; i < stepIndex; i++) {
+        const s = sc.steps[i];
+        curTokens = s.tokens;
+        html += `<div class="msg-item ${i === stepIndex - 1 ? 'last' : ''}">${s.msg}</div>`;
+      }
+      listEl.innerHTML = html;
+      listEl.scrollTop = listEl.scrollHeight;
+
+      document.getElementById('tok-count').textContent = `~${curTokens} tokens`;
+      document.getElementById('tok-bar').style.width = Math.min(100, Math.round(curTokens / 900 * 100)) + '%';
+    }
+
+    render();
+  </script>
+</body>
+</html>
