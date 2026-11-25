@@ -1,156 +1,106 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Agent &amp; LLM 交互笔记专栏</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agent &amp; LLM 笔记专栏</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
   <style>
     :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #e2e8f0;
-      --fg: #0f172a;
-      --muted: #475569;
-      --primary: #0f766e;
+      --theme-color: #0f766e;
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0b1120;
-        --card: #111827;
-        --border: #1e293b;
-        --fg: #f8fafc;
-        --muted: #94a3b8;
-        --primary: #2dd4bf;
-      }
+    .markdown-section {
+      max-width: 860px;
+      padding: 30px 24px 60px;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; padding: 32px 20px 64px;
-      background: var(--bg); color: var(--fg);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      line-height: 1.6;
+    .markdown-section img {
+      border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
     }
-    .wrap { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
-    header { display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-    .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--primary); text-transform: uppercase; }
-    h1 { margin: 0; font-size: 30px; line-height: 1.2; }
-    .lead { margin: 0; color: var(--muted); font-size: 15px; }
-    .section { display: flex; flex-direction: column; gap: 12px; }
-    .sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-    .sec-head h2 { margin: 0; font-size: 20px; }
-    .links { display: flex; gap: 8px; }
-    .btn {
-      display: inline-block; padding: 5px 12px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--card); color: var(--fg);
-      text-decoration: none; font-weight: 600; font-size: 13px;
+    .demo-embed-wrap {
+      margin: 16px 0 24px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0f172a;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
     }
-    .btn:hover { border-color: var(--primary); color: var(--primary); }
-    .frame-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden; padding: 8px;
+    .demo-embed-wrap iframe {
+      width: 100%;
+      border: none;
+      display: block;
     }
-    iframe { width: 100%; border: none; border-radius: 10px; display: block; }
-    .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
-    .note-card {
-      display: block; padding: 14px 16px; border-radius: 12px;
-      border: 1px solid var(--border); background: var(--card);
-      color: var(--fg); text-decoration: none; font-size: 14px; font-weight: 600;
+    .mermaid {
+      text-align: center;
+      margin: 20px 0;
     }
-    .note-card:hover { border-color: var(--primary); color: var(--primary); }
-    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-    .img-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .img-card img { width: 100%; display: block; }
-    .img-cap { padding: 10px 12px; font-size: 13px; color: var(--muted); }
-    footer { border-top: 1px solid var(--border); padding-top: 16px; font-size: 13px; color: var(--muted); }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="kicker">AI Agent &amp; LLM Fundamentals</div>
-      <h1>AI Agent 与大模型交互笔记专栏</h1>
-      <p class="lead">汇总个人 Obsidian 知识库笔记、核心架构图解与可交互式模拟器，所有 Demo 均可直接嵌入 Obsidian 使用。</p>
-    </header>
+  <div id="app">加载笔记中...</div>
+  <script>
+    const DEMO_HEIGHTS = {
+      'llm-inference.html': 680,
+      'react-loop.html': 440,
+      'agent-tools.html': 340
+    };
 
-    <section class="section">
-      <div class="sec-head">
-        <h2>01 · ReAct Loop 交互模拟器</h2>
-        <div class="links">
-          <a class="btn" href="demos/react-loop.html" target="_blank">单独全屏打开 ↗</a>
-          <a class="btn" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/LLM%20fundamental%20-%20ReAct%20Loop%EF%BC%9AAI%20Agent%20%E7%9A%84%E5%BA%95%E5%B1%82%E5%BF%83%E8%84%8F.md" target="_blank">阅读笔记</a>
-        </div>
-      </div>
-      <div class="frame-card">
-        <iframe src="demos/react-loop.html" height="440" title="ReAct Loop Simulator"></iframe>
-      </div>
-    </section>
+    window.$docsify = {
+      name: 'AI Agent 笔记专栏',
+      repo: 'zhangdingsong/ai-agent-notes',
+      loadSidebar: true,
+      subMaxLevel: 2,
+      auto2top: true,
+      plugins: [
+        function (hook) {
+          // 1. Automatically turn demo links inside notes into inline interactive iframes
+          hook.doneEach(function () {
+            const container = document.querySelector('.markdown-section');
+            if (!container) return;
 
-    <section class="section">
-      <div class="sec-head">
-        <h2>02 · RAG · MCP · Subagent 交互实验室</h2>
-        <div class="links">
-          <a class="btn" href="demos/agent-tools.html" target="_blank">单独全屏打开 ↗</a>
-          <a class="btn" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/LLM%20fundamental%20-%20%E8%AE%A9%20AI%20Agent%20%E7%9C%9F%E6%AD%A3%E5%8F%98%E5%BC%BA%E7%9A%84%E4%B8%89%E4%BB%B6%E5%A5%97%EF%BC%9ARAG%E3%80%81MCP%20%E4%B8%8E%20Subagent.md" target="_blank">阅读笔记</a>
-        </div>
-      </div>
-      <div class="frame-card">
-        <iframe src="demos/agent-tools.html" height="330" title="RAG MCP Subagent Lab"></iframe>
-      </div>
-    </section>
+            const links = container.querySelectorAll('a[href*="demos/"]');
+            const seen = new Set();
+            links.forEach(function (a) {
+              const href = a.getAttribute('href') || '';
+              const match = href.match(/demos\/([a-z0-9-]+\.html)/i);
+              if (!match) return;
+              const file = match[1];
+              if (seen.has(file)) return;
+              seen.add(file);
 
-    <section class="section">
-      <div class="sec-head">
-        <h2>03 · LLM Inference 交互式图解</h2>
-        <div class="links">
-          <a class="btn" href="demos/llm-inference.html" target="_blank">单独全屏打开 ↗</a>
-          <a class="btn" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/LLM%20Fundamental%20-%20LLM%20Inference.md" target="_blank">阅读笔记</a>
-        </div>
-      </div>
-      <div class="frame-card">
-        <iframe src="demos/llm-inference.html" height="620" title="LLM Inference Interactive Guide"></iframe>
-      </div>
-    </section>
+              const block = a.closest('p, li, blockquote') || a;
+              if (block.nextElementSibling && block.nextElementSibling.classList.contains('demo-embed-wrap')) return;
 
-    <section class="section">
-      <div class="sec-head">
-        <h2>全部笔记目录（GitHub）</h2>
-      </div>
-      <div class="notes-grid">
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%9AToken%E3%80%81%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AA%97%E5%8F%A3%E3%80%81%E4%B8%8A%E9%99%90%E5%BD%92%E5%B1%9E%E4%B8%8E%E9%80%9F%E7%8E%87%E9%99%90%E6%B5%81.md" target="_blank">第一篇：Token、上下文窗口、上限归属与速率限流</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/%E4%B8%80%E6%96%87%E7%9C%8B%E6%87%82%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%80%9F%E7%8E%87%20-%20Rate%20Limit%2C%20Speed%2C%20Price%20%E6%98%AF%E6%80%8E%E4%B9%88%E5%BD%B1%E5%93%8D%E4%BD%A0%E8%B4%A6%E5%8D%95%E7%9A%84.md" target="_blank">一文看懂大模型速率：Rate Limit, Speed, Price</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/API%20%E4%B8%8E%E4%BA%A7%E5%93%81%E7%9A%84%E5%8C%BA%E5%88%AB.md" target="_blank">API 与产品的区别</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%9A%F0%9F%A7%A0%20AI%20%E8%BF%9B%E9%98%B6%E9%80%9A%E8%AF%86%EF%BC%9A%E4%BB%8E%E5%BC%80%E6%BA%90%E6%9D%83%E9%87%8D%E3%80%81Meta%20Muse%20%E5%88%B0%20API%20%E4%B8%8E%E9%99%90%E6%B5%81%E6%9C%BA%E5%88%B6.md" target="_blank">第二篇：从开源权重、Meta Muse 到 API 与限流机制</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/%E7%AC%AC%E4%BA%8C%E7%AF%87%E7%8B%AC%E7%AB%8B%E8%BF%9B%E9%98%B6%E7%AC%94%E8%AE%B0.md" target="_blank">第二篇独立进阶笔记</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/LLM%20Fundamental%20-%20LLM%20Inference.md" target="_blank">LLM Fundamental - LLM Inference</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/AI%20%E6%97%B6%E4%BB%A3%EF%BC%8C%E8%BD%AF%E4%BB%B6%E8%A1%8C%E4%B8%9A%E5%AE%9A%E8%A7%84%E5%88%99%E7%9A%84%E4%BA%BA%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8D%A2%E6%88%90%E4%BA%86%E5%8D%8E%E4%BA%BA%E9%9D%A2%E5%AD%94%EF%BC%9F.md" target="_blank">AI 时代，软件行业定规则的人为什么换成了华人面孔？</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/LLM%20fundamental%20-%20ReAct%20Loop%EF%BC%9AAI%20Agent%20%E7%9A%84%E5%BA%95%E5%B1%82%E5%BF%83%E8%84%8F.md" target="_blank">ReAct Loop：AI Agent 的底层心脏</a>
-        <a class="note-card" href="https://github.com/zhangdingsong/ai-agent-notes/blob/main/notes/LLM%20fundamental%20-%20%E8%AE%A9%20AI%20Agent%20%E7%9C%9F%E6%AD%A3%E5%8F%98%E5%BC%BA%E7%9A%84%E4%B8%89%E4%BB%B6%E5%A5%97%EF%BC%9ARAG%E3%80%81MCP%20%E4%B8%8E%20Subagent.md" target="_blank">让 Agent 变强的三件套：RAG、MCP 与 Subagent</a>
-      </div>
-    </section>
+              const wrap = document.createElement('div');
+              wrap.className = 'demo-embed-wrap';
+              const iframe = document.createElement('iframe');
+              iframe.src = 'demos/' + file;
+              iframe.height = DEMO_HEIGHTS[file] || 460;
+              iframe.loading = 'lazy';
+              wrap.appendChild(iframe);
+              block.insertAdjacentElement('afterend', wrap);
+            });
 
-    <section class="section">
-      <div class="sec-head">
-        <h2>核心图解归档</h2>
-      </div>
-      <div class="gallery">
-        <div class="img-card">
-          <img src="assets/react-vs-cot-plan.jpg" alt="Agent Reasoning Patterns" />
-          <div class="img-cap">CoT vs ReAct Loop vs Plan-and-Execute</div>
-        </div>
-        <div class="img-card">
-          <img src="assets/agent-architecture.jpg" alt="AI Agent Architecture" />
-          <div class="img-cap">ReAct + RAG + MCP + Subagents 全局架构</div>
-        </div>
-        <div class="img-card">
-          <img src="assets/llm-api-metrics.jpg" alt="LLM API Metrics" />
-          <div class="img-cap">大模型速率、速度、价格与 1M 上下文窗口</div>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      Hosted on GitHub Pages · <a href="https://github.com/zhangdingsong/ai-agent-notes" style="color:var(--primary)">GitHub Repository</a>
-    </footer>
-  </div>
+            // 2. Render Mermaid diagrams
+            if (window.mermaid) {
+              const codeBlocks = container.querySelectorAll('pre[data-lang="mermaid"]');
+              codeBlocks.forEach(function (pre, idx) {
+                const div = document.createElement('div');
+                div.className = 'mermaid';
+                div.textContent = pre.textContent;
+                pre.replaceWith(div);
+              });
+              window.mermaid.run({ querySelector: '.mermaid' });
+            }
+          });
+        }
+      ]
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: false, theme: 'default' });
+  </script>
 </body>
 </html>
