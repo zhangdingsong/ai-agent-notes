@@ -42,21 +42,3 @@
 ## 🖼️ 视觉总览（`assets/`）
 
 ![ReAct Loop 交互演示](assets/react-loop-demo.gif)
-
----
-
-## 在 Obsidian 中无插件嵌入交互 Demo
-
-直接把下面的 `<iframe>` 贴进你的 Obsidian 笔记中即可正常显示并交互：
-
-```html
-<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/llm-inference.html" width="100%" height="900" style="border:none;border-radius:12px;"></iframe>
-```
-
-```html
-<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/react-loop.html" width="100%" height="460" style="border:none;border-radius:12px;"></iframe>
-```
-
-```html
-<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/agent-tools.html" width="100%" height="340" style="border:none;border-radius:12px;"></iframe>
-```
