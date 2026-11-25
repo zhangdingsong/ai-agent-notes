@@ -19,8 +19,6 @@
 
 - 🎮 **在线交互体验**：[**点击进入 RAG · MCP · Subagent 实验室 ↗**](https://zhangdingsong.github.io/ai-agent-notes/demos/agent-tools.html)
 
-![AI Agent 全局架构](../assets/agent-architecture.jpg)
-
   
 
 ---

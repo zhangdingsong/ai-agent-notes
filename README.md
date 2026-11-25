@@ -43,8 +43,6 @@
 
 ![ReAct Loop 交互演示](assets/react-loop-demo.gif)
 
-![AI Agent 架构图](assets/agent-architecture.jpg)
-
 ---
 
 ## 在 Obsidian 中无插件嵌入交互 Demo
