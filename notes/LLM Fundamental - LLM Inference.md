@@ -1,6 +1,4 @@
-> 🎮 **在线交互指南**：[打开 LLM Inference 交互式图解](../demos/llm-inference.html)
-
-<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/llm-inference.html" width="100%" height="900" style="border:none;border-radius:12px;"></iframe>
+> 🎮 **在线交互图解**：[**点击进入 LLM Inference 交互式指南 ↗**](https://zhangdingsong.github.io/ai-agent-notes/demos/llm-inference.html)（或查看 [仓库源文件](../demos/llm-inference.html)）
 
 太好了，既然你对这个感兴趣，我们就把 **LLM 推理（Inference）的核心体系** 顺着一条主线完整串起来。掌握了这一套，以后看 vLLM、DeepSeek、SGLang 或者各种 AI 基础设施文章基本都能一眼看懂。
 

@@ -11,11 +11,9 @@
 
 ## 一、交互式模拟器
 
-- 🎮 **在线体验**：[打开 ReAct Loop 模拟器](../demos/react-loop.html)
+- 🎮 **在线交互体验**：[**点击进入 ReAct Loop 交互模拟器 ↗**](https://zhangdingsong.github.io/ai-agent-notes/demos/react-loop.html)
 
 ![ReAct Loop 交互演示](../assets/react-loop-demo.gif)
-
-<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/react-loop.html" width="100%" height="460" style="border:none;border-radius:12px;"></iframe>
 
   
 
