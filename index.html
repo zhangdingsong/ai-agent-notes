@@ -52,7 +52,17 @@
       subMaxLevel: 2,
       auto2top: true,
       plugins: [
-        function (hook) {
+        function (hook, vm) {
+          // 0. Automatically inject filename as H1 title for Obsidian notes that lack an H1
+          hook.beforeEach(function (content) {
+            const file = (vm.route && vm.route.file) || '';
+            if (file.startsWith('notes/') && !/^#\s+/m.test(content.trimStart().split('\n')[0] || '')) {
+              const rawName = decodeURIComponent(file.replace(/^notes\//, '').replace(/\.md$/i, ''));
+              return '# ' + rawName + '\n\n' + content;
+            }
+            return content;
+          });
+
           // 1. Automatically turn demo links inside notes into inline interactive iframes
           hook.doneEach(function () {
             const container = document.querySelector('.markdown-section');
