@@ -1,19 +1,10 @@
-<iframe src="attachments/llm_inference_interactive_guide.html" width="100%" height="900" style="border:none;"></iframe>
+> 🎮 **在线交互指南**：[打开 LLM Inference 交互式图解](../demos/llm-inference.html)
 
-
-![[llm_inference_interactive_guide 2.html]]
-```html-embed
-
-```
-
-```html-embed VaultDS/AI基础知识/attachments/llm_inference_interactive_guide.html
-440
-```
+<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/llm-inference.html" width="100%" height="900" style="border:none;border-radius:12px;"></iframe>
 
 太好了，既然你对这个感兴趣，我们就把 **LLM 推理（Inference）的核心体系** 顺着一条主线完整串起来。掌握了这一套，以后看 vLLM、DeepSeek、SGLang 或者各种 AI 基础设施文章基本都能一眼看懂。
 
 我们可以从**底层原理 → 性能瓶颈 → 现代推理架构优化**这三层来拆解。
-![[llm_architecture_flow.gif]]
 
 ---
 

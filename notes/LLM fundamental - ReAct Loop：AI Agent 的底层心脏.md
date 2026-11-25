@@ -9,17 +9,13 @@
 
   
 
-## 一、交互式模拟器（Obsidian 内嵌）
+## 一、交互式模拟器
 
-  
+- 🎮 **在线体验**：[打开 ReAct Loop 模拟器](../demos/react-loop.html)
 
-> [!tip] 使用说明
+![ReAct Loop 交互演示](../assets/react-loop-demo.gif)
 
-> 把配套的 `react_loop_simulator_standalone.html` 放到你的 Obsidian 仓库附件目录（例如 `attachments/`），下面这行 `iframe` 就能直接在笔记里交互点击（如果路径不同，修改 `src` 即可）：
-
-  
-
-<iframe src="attachments/react_loop_simulator_standalone.html" width="100%" height="440" style="border:none;border-radius:12px;"></iframe>
+<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/react-loop.html" width="100%" height="460" style="border:none;border-radius:12px;"></iframe>
 
   
 

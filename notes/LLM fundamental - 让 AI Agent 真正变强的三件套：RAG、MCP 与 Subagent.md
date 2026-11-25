@@ -15,17 +15,13 @@
 
   
 
-## 一、交互实验室（Obsidian 内嵌）
+## 一、交互实验室
 
-  
+- 🎮 **在线体验**：[打开 RAG · MCP · Subagent 实验室](../demos/agent-tools.html)
 
-> [!tip] 使用说明
+![AI Agent 全局架构](../assets/agent-architecture.jpg)
 
-> 把配套的 `agent_superpowers_standalone.html` 放进 Obsidian 仓库的 `attachments/` 文件夹，下面即可直接在笔记里交互切换：
-
-  
-
-<iframe src="attachments/agent_superpowers_standalone.html" width="100%" height="340" style="border:none;border-radius:12px;"></iframe>
+<iframe src="https://zhangdingsong.github.io/ai-agent-notes/demos/agent-tools.html" width="100%" height="340" style="border:none;border-radius:12px;"></iframe>
 
   
 
