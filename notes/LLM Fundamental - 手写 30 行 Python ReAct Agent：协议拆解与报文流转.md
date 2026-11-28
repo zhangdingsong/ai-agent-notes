@@ -34,16 +34,7 @@ while True:
 
 为了让“云端纯大脑”精确调度“本地 Python 手脚”，真实的 HTTP API 协议在伪代码之上补齐了像**餐厅点餐**一样的 **3 个核心零件**：
 
-```mermaid
-sequenceDiagram
-    participant PY as "⚙️ 本地 Python 进程 (手脚)"
-    participant LLM as "🧠 云端大模型 API (纯大脑)"
-    PY->>LLM: "1. 发送 messages[] 黑板 + TOOLS 菜单 (JSON Schema)"
-    LLM-->>PY: "2. 暂不回答用户 (content=null)，开出点单条 tool_calls [id='call_9x8a']"
-    Note over PY: "本地真正执行 get_weather(city='杭州') -> 拿到 '14°C，晴'"
-    PY->>LLM: "3. 追加 role='tool' 消息，并原样贴回取餐号 tool_call_id='call_9x8a'"
-    LLM-->>PY: "4. 看到工具结果，若无需再调工具则输出最终回答 (退出循环)"
-```
+![本地 Python 手脚与云端大模型 4 步点餐流转](../assets/react-protocol-seq.jpg)
 
 ### 零件 1：工具菜单（`TOOLS` JSON Schema）—— 给大脑看的“点菜说明书”
 你在本地写好了 `def get_weather(city: str)`，但云端模型根本不知道它的存在。因此每次发 HTTP 请求时，除了传对话历史 `messages`，还必须在同级传一个 `tools` 数组，用标准 **JSON Schema** 明确告诉模型三件事：

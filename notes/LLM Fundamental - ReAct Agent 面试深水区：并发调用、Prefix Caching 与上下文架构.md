@@ -61,21 +61,7 @@ flowchart LR
 
 模型选择“多轮串行”还是“单轮并发”，唯一判据是**任务间是否存在数据因果依赖（Data Dependency）**：
 
-```mermaid
-flowchart TB
-    subgraph S1["情况 A：存在数据因果依赖 → 必须串行跑 2 轮工具 + 1 轮汇总（共 3 次 API 请求）"]
-        A1["第1轮请求: 查杭州气温，若低于20度算差值"] --> A2["模型开单 1: get_weather('杭州')"]
-        A2 --> A3["本地返回: 14°C（此时模型才知道具体数字）"]
-        A3 --> A4["第2轮请求 -> 模型开单 2: calc('20 - 14')"]
-        A4 --> A5["本地返回: 6 -> 第3轮请求输出最终回答"]
-    end
-
-    subgraph S2["情况 B：无数据依赖 → 单轮并发开 2 单 + 1 轮汇总（仅需 2 次 API 请求）"]
-        B1["第1轮请求: 杭州和北京今天分别几度？"] --> B2["单个 assistant 消息内同时返回 2 个 tool_calls:<br/>① call_01: get_weather('杭州')<br/>② call_02: get_weather('北京')"]
-        B2 --> B3["本地并行/循环执行，连贴 2 条 role='tool' 消息"]
-        B3 --> B4["第2轮请求 -> 模型直接拿到两地气温汇总交卷!"]
-    end
-```
+![多工具串行 vs 单轮并发判别边界](../assets/react-serial-vs-parallel.jpg)
 
 ### 真实并发点单报文长什么样？
 在第 1 轮响应中，模型吐出的单个 `assistant` 消息内部，`tool_calls` 数组直接包含两个元素：
@@ -191,16 +177,7 @@ flowchart TB
    别忘了 Agent 是多轮循环的！假设跑到第 5 轮，`messages[]` 黑板上已经积累了前 4 轮读代码文件、查终端日志的 **20K 历史 Tokens**。
    如果你在第 5 轮去更新排在最前面的 `System Prompt`（或第 1 条 `user` 消息）里的秒级时间 `12:12:18`，那么排在这个时间戳后面的 **4K 工具 + 20K 历史对话消息（共 24K Tokens）的 KV Cache 全部作废（Cache Miss）**，每一轮都要重新全量 Prefill！
 
-```mermaid
-flowchart TB
-    subgraph Wrong["❌ 65分错误落地方案：把动态秒级时间塞进 System 末尾"]
-        W1["System 固定规则 (1K)<br/>✅ Cache Hit"] --> W2["⚡ 动态时间 12:12:18<br/>每轮都在变!"] --> W3["15 个 TOOLS (4K)<br/>❌ Cache Miss!"] --> W4["前 4 轮积累的 20K 历史消息<br/>❌ 全部 Cache Miss 重算!"] --> W5["第 5 轮新消息"]
-    end
-
-    subgraph Right["✅ 100分生产级方案（Claude Code / Cursor / Antigravity 同款架构）"]
-        R1["System 纯静态 + 15 个确定性排序 TOOLS (5K)<br/>✅ 100% Cache Hit"] --> R2["前 4 轮积累的 20K 历史 messages[0..n-1]<br/>✅ 100% Cache Hit!"] --> R3["第 5 轮最后一条新增消息 + 末尾尾插 <env_context> 动态时间与活跃路径<br/>⚡ 仅这几十个新增 Token 做 Incremental Prefill"]
-    end
-```
+![Prefix Caching 65分击穿 vs 100分尾插架构对比](../assets/prefix-cache-tail-injection.jpg)
 
 #### ⚠️ 失分点 2：“TOOLS 定义存在随机变化的可能”
 题目明确给定“15 个固定工具”，在工程代码里 **绝对不允许 `TOOLS` 出现随机顺序变化**！严禁用 Python 无序 `set` 组装工具列表或让字典序列化键序漂移，工具注册表必须强制执行 **确定性排序（Deterministic Ordering，如按工具 `name` 字典序固定排列）**。
