@@ -1,11 +1,15 @@
 > [!abstract] 核心导读
 > 前一篇《ReAct Loop：AI Agent 的底层心脏》用 **10 行 `while` 伪代码** 讲清了 ReAct 的概念骨架；本篇将彻底撕掉所有第三方框架（LangChain / OpenAI SDK）的黑盒包装，用 **零依赖的原生 Python（核心逻辑约 30 行，完整文件 67 行）** 亲手跑通一个真实的 ReAct Agent，并用显微镜逐轮看清 `messages[]` 黑板与 `tool_call_id` 在客户端与云端 API 之间的真实流转。
 
+![ReAct Agent 核心循环隐喻](../assets/x-react-cover.jpg)
+
 ---
 
 ## 一、交互式报文与源码透视实验室
 
 - 🎮 **在线交互体验**：[**点击进入 Mini ReAct Agent 报文与源码实验室 ↗**](https://zhangdingsong.github.io/ai-agent-notes/demos/mini-react-agent.html)
+
+![Mini ReAct Agent 报文流转与 HTTP 400 故障演示](../assets/mini-react-agent-demo.gif)
 
 ---
 

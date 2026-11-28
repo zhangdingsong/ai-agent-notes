@@ -49,3 +49,7 @@
 ## 🖼️ 视觉总览（`assets/`）
 
 ![ReAct Loop 交互演示](assets/react-loop-demo.gif)
+
+![Mini ReAct Agent 报文流转与 400 故障演示](assets/mini-react-agent-demo.gif)
+
+![ReAct 面试深水区 Prefix Cache 与规模推演](assets/react-agent-interview-demo.gif)

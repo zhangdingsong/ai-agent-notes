@@ -3,11 +3,15 @@
 > 
 > 全文完整保留了围绕 `mini_react_agent.py` 展开的 **4 道高强度面试连环追问、真实初版作答盲区、面试官逐字严厉批改与满分标准答案模板**，将上层 Agent 消息编排与底层 **LLM Inference（Incremental Prefill / Decode 显存带宽瓶颈 / Prefix Caching）** 彻底融会贯通。
 
+![ReAct Loop · messages[] · Prefix Cache 架构总览](../assets/react-agent-arch.jpg)
+
 ---
 
 ## 一、交互式面试深水区实验室
 
 - 🎮 **在线交互体验**：[**点击进入 ReAct Agent 面试深水区交互实验室 ↗**](https://zhangdingsong.github.io/ai-agent-notes/demos/react-agent-interview.html)
+
+![ReAct Agent 面试深水区交互演示](../assets/react-agent-interview-demo.gif)
 
 ---
 
