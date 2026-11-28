@@ -20,9 +20,11 @@
 7. [LLM Fundamental - LLM Inference](notes/LLM%20Fundamental%20-%20LLM%20Inference.md) · [🎮 交互图解](demos/llm-inference.html)
 8. [LLM Fundamental - ReAct Loop：AI Agent 的底层心脏](notes/LLM%20Fundamental%20-%20ReAct%20Loop：AI%20Agent%20的底层心脏.md) · [🎮 交互模拟器](demos/react-loop.html)
 9. [LLM Fundamental - 让 AI Agent 真正变强的三件套：RAG、MCP 与 Subagent](notes/LLM%20Fundamental%20-%20让%20AI%20Agent%20真正变强的三件套：RAG、MCP%20与%20Subagent.md) · [🎮 交互实验室](demos/agent-tools.html)
+10. [LLM Fundamental - 手写 30 行 Python ReAct Agent：协议拆解与报文流转](notes/LLM%20Fundamental%20-%20手写%2030%20行%20Python%20ReAct%20Agent：协议拆解与报文流转.md) · [🎮 报文与源码实验室](demos/mini-react-agent.html)
+11. [LLM Fundamental - ReAct Agent 面试深水区：并发调用、Prefix Caching 与上下文架构](notes/LLM%20Fundamental%20-%20ReAct%20Agent%20面试深水区：并发调用、Prefix%20Caching%20与上下文架构.md) · [🎮 面试深水区实验室](demos/react-agent-interview.html)
 
 ### 工程实战篇：跨设备与跨 Agent 协作
-10. [跨设备跨 Agent 的知识库工程化编排方案](notes/跨设备跨%20Agent%20的知识库工程化编排方案.md) · [🛠️ 新电脑恢复指南](SETUP.md)
+12. [跨设备跨 Agent 的知识库工程化编排方案](notes/跨设备跨%20Agent%20的知识库工程化编排方案.md) · [🛠️ 新电脑恢复指南](SETUP.md)
 
 ---
 
@@ -33,6 +35,8 @@
 | **LLM Inference** | Prefill / Decode / KV Cache 交互指南 | [打开](demos/llm-inference.html) |
 | **ReAct Loop** | Thought → Action → Observation 步进模拟器 | [打开](demos/react-loop.html) |
 | **RAG · MCP · Subagent** | Agent 三大扩展能力痛点对比实验室 | [打开](demos/agent-tools.html) |
+| **Mini ReAct Agent** | `messages[]` 步进抓包（含 HTTP 400 故障注入）与 67 行源码透视 | [打开](demos/mini-react-agent.html) |
+| **ReAct 面试深水区** | Prefix Cache 尾插 vs 击穿、并发点单与 100 工具规模推演 | [打开](demos/react-agent-interview.html) |
 
 ---
 

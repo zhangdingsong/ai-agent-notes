@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReAct Agent 面试深水区交互实验室</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f8fafc;
+      --border: #e2e8f0;
+      --fg: #0f172a;
+      --muted: #64748b;
+      --primary: #0f766e;
+      --primary-fg: #ffffff;
+      --warn: #d97706;
+      --err: #dc2626;
+      --sec: #f1f5f9;
+      --hit-bg: #ccfbf1;
+      --hit-fg: #115e59;
+      --miss-bg: #fee2e2;
+      --miss-fg: #991b1b;
+      --code-bg: #0f172a;
+      --code-fg: #e2e8f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --border: #334155;
+        --fg: #f8fafc;
+        --muted: #94a3b8;
+        --primary: #2dd4bf;
+        --primary-fg: #0f172a;
+        --warn: #fbbf24;
+        --err: #f87171;
+        --sec: #0b1120;
+        --hit-bg: #134e4a;
+        --hit-fg: #5eead4;
+        --miss-bg: #450a0a;
+        --miss-fg: #fca5a5;
+        --code-bg: #090d16;
+        --code-fg: #e2e8f0;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 14px 16px; background: var(--bg); color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 13.5px; line-height: 1.5;
+    }
+    .wrap { max-width: 840px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+    .topbar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    .btn-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    button {
+      font-family: inherit; font-size: 12px; padding: 5px 10px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--card); color: var(--fg);
+      cursor: pointer; transition: all 0.15s;
+    }
+    button.active { background: var(--primary); color: var(--primary-fg); border-color: transparent; font-weight: 600; }
+    button.bad-active { background: var(--err); color: #fff; border-color: transparent; font-weight: 600; }
+    .panel {
+      padding: 13px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card); display: flex; flex-direction: column; gap: 10px;
+    }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+    .box { padding: 10px 12px; border-radius: 8px; background: var(--sec); display: flex; flex-direction: column; gap: 6px; }
+    .title { font-size: 14.5px; font-weight: 700; }
+    .desc { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.55; }
+    .kv-strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: stretch; }
+    .seg {
+      flex: 1; min-width: 110px; padding: 8px 10px; border-radius: 8px;
+      font-size: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 4px;
+    }
+    .seg.hit { background: var(--hit-bg); color: var(--hit-fg); border: 1px solid var(--primary); }
+    .seg.miss { background: var(--miss-bg); color: var(--miss-fg); border: 1px solid var(--err); }
+    .seg-name { font-weight: 700; }
+    .seg-meta { font-family: ui-monospace, monospace; font-size: 11px; opacity: 0.9; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    @media (max-width: 560px) { .metrics { grid-template-columns: 1fr; } }
+    .metric { padding: 9px 10px; border-radius: 8px; background: var(--sec); border: 1px solid var(--border); }
+    .m-label { font-size: 11.5px; color: var(--muted); }
+    .m-val { font-family: ui-monospace, monospace; font-size: 15px; font-weight: 700; margin-top: 2px; }
+    .good { color: var(--primary); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--err); }
+    pre {
+      margin: 0; padding: 9px 10px; border-radius: 8px; background: var(--code-bg); color: var(--code-fg);
+      font-family: ui-monospace, monospace; font-size: 11.5px; line-height: 1.45; overflow-x: auto;
+    }
+    input[type="range"] { width: 180px; accent-color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="btn-group">
+        <button id="t-cache" class="active" onclick="setTab('cache')">🧊 1. Prefix Cache 尾插 vs 击穿</button>
+        <button id="t-para" onclick="setTab('para')">⚡ 2. 串行 vs 并发点单</button>
+        <button id="t-scale" onclick="setTab('scale')">📈 3. 100 个大工具灾难推演</button>
+      </div>
+      <div id="top-right" class="btn-group"></div>
+    </div>
+
+    <div id="stage" class="panel"></div>
+  </div>
+
+  <script>
+    let tab = 'cache';
+    let cacheGood = true;
+    let paraMode = 'parallel';
+    let toolCount = 15;
+
+    function setTab(t) {
+      tab = t;
+      ['cache', 'para', 'scale'].forEach(k => {
+        document.getElementById('t-' + k).className = k === t ? 'active' : '';
+      });
+      render();
+    }
+
+    function render() {
+      const right = document.getElementById('top-right');
+      const stage = document.getElementById('stage');
+
+      if (tab === 'cache') {
+        right.innerHTML = `
+          <button class="${!cacheGood ? 'bad-active' : ''}" onclick="cacheGood=false;render()">❌ 65分: 动态时间塞进 System</button>
+          <button class="${cacheGood ? 'active' : ''}" onclick="cacheGood=true;render()">✅ 100分: 动态状态尾插 (Tail Injection)</button>
+        `;
+
+        if (!cacheGood) {
+          stage.innerHTML = `
+            <div class="title">第 5 轮请求现场：修改 System 末尾的秒级时间，连环击穿后续 24K 历史缓存！</div>
+            <p class="desc">由于自回归 Attention + RoPE 依赖严格字节级前缀一致，排在前面的秒级时间戳一跳动，后面紧跟的 4K 工具与前 4 轮积累的 20K 代码历史全部变成 Cache Miss！</p>
+            <div class="kv-strip">
+              <div class="seg hit"><div class="seg-name">System 静态规则</div><div class="seg-meta">1,000 tok · ✅ Hit</div></div>
+              <div class="seg miss"><div class="seg-name">⚡ 秒级时间 12:12:18</div><div class="seg-meta">20 tok · 每轮变!</div></div>
+              <div class="seg miss"><div class="seg-name">15 个固定 TOOLS</div><div class="seg-meta">4,000 tok · ❌ Miss</div></div>
+              <div class="seg miss"><div class="seg-name">前 4 轮历史 messages</div><div class="seg-meta">20,000 tok · ❌ 全崩重算!</div></div>
+              <div class="seg miss"><div class="seg-name">第 5 轮新增消息</div><div class="seg-meta">100 tok · Prefill</div></div>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="m-label">本轮缓存命中 (Cached)</div><div class="m-val bad">1,000 / 25,120 (4%)</div></div>
+              <div class="metric"><div class="m-label">本轮需做 Prefill 计算</div><div class="m-val bad">24,120 tokens (巨慢)</div></div>
+              <div class="metric"><div class="m-label">第 5 轮等效计费 (按2折缓存算)</div><div class="m-val bad">~97% 全价账单</div></div>
+            </div>
+          `;
+        } else {
+          stage.innerHTML = `
+            <div class="title">第 5 轮请求现场：顶层静态冻结 + 动态环境尾插 (&lt;env_context&gt;)，99.5% 极限命中！</div>
+            <p class="desc">System 与确定性排序的 15 个 TOOLS 完全冻结，前 4 轮历史只增不改；动态时间与当前打开文件路径尾插在最后一条新消息末尾，GPU 只需对末尾 120 tokens 做 Incremental Prefill。</p>
+            <div class="kv-strip">
+              <div class="seg hit"><div class="seg-name">System 静态冻结</div><div class="seg-meta">1,000 tok · ✅ Hit</div></div>
+              <div class="seg hit"><div class="seg-name">15 个排序 TOOLS</div><div class="seg-meta">4,000 tok · ✅ Hit</div></div>
+              <div class="seg hit"><div class="seg-name">前 4 轮历史 messages</div><div class="seg-meta">20,000 tok · ✅ 100% Hit!</div></div>
+              <div class="seg miss"><div class="seg-name">本轮新消息 + &lt;env_context&gt;</div><div class="seg-meta">120 tok · ⚡ 增量 Prefill</div></div>
+            </div>
+            <div class="metrics">
+              <div class="metric"><div class="m-label">本轮缓存命中 (Cached)</div><div class="m-val good">25,000 / 25,120 (99.5%)</div></div>
+              <div class="metric"><div class="m-label">本轮需做 Incremental Prefill</div><div class="m-val good">仅 120 tokens (秒回)</div></div>
+              <div class="metric"><div class="m-label">第 5 轮等效计费 (按2折缓存算)</div><div class="m-val good">立省 ~79.6% 费用 (不省Token数!)</div></div>
+            </div>
+          `;
+        }
+      } else if (tab === 'para') {
+        right.innerHTML = `
+          <button class="${paraMode === 'serial' ? 'active' : ''}" onclick="paraMode='serial';render()">🔗 有数据依赖 (串行 2 轮工具)</button>
+          <button class="${paraMode === 'parallel' ? 'active' : ''}" onclick="paraMode='parallel';render()">⚡ 无数据依赖 (单轮并发开 2 单)</button>
+        `;
+
+        if (paraMode === 'parallel') {
+          stage.innerHTML = `
+            <div class="title">提问：“杭州和北京今天分别几度？”（无因果依赖 → Parallel Tool Calling）</div>
+            <div class="cols">
+              <div class="box">
+                <div style="font-size:12px;font-weight:700;">第 1 轮模型直接吐出「双黄蛋」tool_calls：</div>
+                <pre>{
+  "role": "assistant",
+  "content": null,
+  "tool_calls": [
+    { "id": "call_hz_01", "function": { "name": "get_weather", "arguments": "{\\"city\\":\\"杭州\\"}" } },
+    { "id": "call_bj_02", "function": { "name": "get_weather", "arguments": "{\\"city\\":\\"北京\\"}" } }
+  ]
+}</pre>
+              </div>
+              <div class="box">
+                <div style="font-size:12px;font-weight:700;">执行收益与边界条件：</div>
+                <p class="desc">• <b>总 API 往返</b>：仅需 <b>2 轮</b>（第 1 轮开 2 单 → 本地贴回 2 条带各自 tool_call_id 的 tool 消息 → 第 2 轮直接汇总）。</p>
+                <p class="desc">• <b>双向校验</b>：开了 2 单就必须回传 2 条 tool 消息，漏回任意一条立刻触发 HTTP 400。</p>
+                <p class="desc">• <b>何时主动关并发？</b>遇到写同一文件等互斥副作用时，传 <code>parallel_tool_calls: false</code> 强制串行。</p>
+              </div>
+            </div>
+          `;
+        } else {
+          stage.innerHTML = `
+            <div class="title">提问：“杭州今天几度？低于 20 度帮我算差几度”（有因果依赖 → 必须串行）</div>
+            <div class="cols">
+              <div class="box">
+                <div style="font-size:12px;font-weight:700;">为什么第 1 轮开不出 calc 的单？</div>
+                <pre>Round 1 -> get_weather("杭州")   // 此时还不知道是几度！
+Local   -> 返回 "14°C，晴"
+Round 2 -> calc("20 - 14")       // 拿到 14 后才能填出表达式参数
+Local   -> 返回 "6"
+Round 3 -> 输出最终自然语言结论</pre>
+              </div>
+              <div class="box">
+                <div style="font-size:12px;font-weight:700;">面试判别口诀：</div>
+                <p class="desc">• <b>看参数依赖</b>：后一个工具的入参（<code>20 - X</code>）依赖前一个工具的返回值（<code>X = 14</code>）时，神仙模型也必须串行跑多轮。</p>
+                <p class="desc">• <b>总 API 往返</b>：共需 <b>3 轮</b> 请求，<code>TOOLS</code> 菜单与前缀被发送并计入 <code>prompt_tokens</code> 共 3 次。</p>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        right.innerHTML = `
+          <span style="font-size:12px;color:var(--muted);">挂载工具数:</span>
+          <input type="range" min="2" max="100" step="1" value="${toolCount}" oninput="toolCount=Number(this.value);render()" />
+          <span style="font-family:monospace;font-weight:700;min-width:58px;">${toolCount} 个</span>
+        `;
+
+        const toolTokens = toolCount * 300;
+        const hitOpenAI = toolTokens >= 1024;
+        const tpotState = toolTokens < 5000 ? ['正常 (极快)', 'good'] : toolTokens < 15000 ? ['轻度上升', 'warn'] : ['明显变慢 (HBM带宽瓶颈!)', 'bad'];
+        const confState = toolCount <= 15 ? ['高准确率 (>95%)', 'good'] : toolCount <= 30 ? ['开始注意力稀释', 'warn'] : ['Tool Confusion 选错率飙升!', 'bad'];
+
+        stage.innerHTML = `
+          <div class="title">拖动右上角滑块：当前挂载 ${toolCount} 个工具（约占 ${toolTokens.toLocaleString()} Tokens）</div>
+          <p class="desc">直观验证两个反直觉面试考点：① 工具太少时（&lt; 1024 tok）根本触发不了自动缓存；② 工具太多时（30K tok），<b>即便 100% 命中 Prefix Cache，Decode 吐字依然变慢！</b></p>
+          <div class="metrics">
+            <div class="metric">
+              <div class="m-label">OpenAI 自动 Prefix Cache 门槛 (1024 tok)</div>
+              <div class="m-val ${hitOpenAI ? 'good' : 'warn'}">${hitOpenAI ? '✅ 已跨过门槛 (可命中折扣)' : '⚠️ 未达 1024 门槛 (0%缓存全价!)'}</div>
+            </div>
+            <div class="metric">
+              <div class="m-label">Decode 吐字延迟 (TPOT · 显存带宽受限)</div>
+              <div class="m-val ${tpotState[1]}">${tpotState[0]}</div>
+            </div>
+            <div class="metric">
+              <div class="m-label">模型选工具准确率 (Tool Confusion)</div>
+              <div class="m-val ${confState[1]}">${confState[0]}</div>
+            </div>
+          </div>
+          <div class="box">
+            <div style="font-size:12px;font-weight:700;">底层机制与架构权衡（面试必背）：</div>
+            <p class="desc">• <b>为什么命中缓存 Decode 还会变慢？</b>Prefix Cache 只省了 Prefill 计算；Decode 每吐 1 个字都要把这 <b>${toolTokens.toLocaleString()} tokens</b> 的 KV Cache 从显存搬到计算单元做 Attention（Memory-bandwidth bound）。</p>
+            <p class="desc">• <b>超过 30 个工具怎么破？</b>① 拆 <b>Subagent</b> 隔离工具集；② 用固定 <code>tool_search</code> 元工具按需检索，把查到的扩展工具说明<b>尾插进 messages 末尾</b>（切忌每轮直接替换顶层 TOOLS，否则打碎 Prefix Cache！）。</p>
+          </div>
+        `;
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>

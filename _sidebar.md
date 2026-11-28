@@ -12,12 +12,16 @@
   - [07 · LLM Inference 推理体系](notes/LLM%20Fundamental%20-%20LLM%20Inference.md)
   - [08 · ReAct Loop：Agent 的底层心脏](notes/LLM%20Fundamental%20-%20ReAct%20Loop：AI%20Agent%20的底层心脏.md)
   - [09 · RAG、MCP 与 Subagent](notes/LLM%20Fundamental%20-%20让%20AI%20Agent%20真正变强的三件套：RAG、MCP%20与%20Subagent.md)
+  - [10 · 手写 30 行 Python ReAct Agent](notes/LLM%20Fundamental%20-%20手写%2030%20行%20Python%20ReAct%20Agent：协议拆解与报文流转.md)
+  - [11 · ReAct Agent 面试深水区](notes/LLM%20Fundamental%20-%20ReAct%20Agent%20面试深水区：并发调用、Prefix%20Caching%20与上下文架构.md)
 
 - **工程实战篇：跨设备与跨 Agent 协作**
-  - [10 · 跨设备跨 Agent 的知识库编排方案](notes/跨设备跨%20Agent%20的知识库工程化编排方案.md)
+  - [12 · 跨设备跨 Agent 的知识库编排方案](notes/跨设备跨%20Agent%20的知识库工程化编排方案.md)
   - [🛠️ 新电脑 / 新 Agent 恢复指南](SETUP.md)
 
 - **独立交互实验室**
   - [🎮 LLM Inference 图解](demos/llm-inference.html ':ignore')
   - [🎮 ReAct Loop 模拟器](demos/react-loop.html ':ignore')
   - [🎮 RAG · MCP · Subagent 实验室](demos/agent-tools.html ':ignore')
+  - [🎮 Mini ReAct Agent 实验室](demos/mini-react-agent.html ':ignore')
+  - [🎮 ReAct 面试深水区实验室](demos/react-agent-interview.html ':ignore')

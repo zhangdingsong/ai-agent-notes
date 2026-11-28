@@ -35,3 +35,8 @@
 
 - 本仓库通过 `scripts/post-commit.py` 实现本地单向投递：每次 `git commit` 后，自动将 `notes/*.md` 转换图片路径并补全 `<iframe>`，同步到本机的 `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultDS/AI基础知识/`。
 - 在新电脑克隆本仓库后，只需执行一次 `./scripts/setup.sh` 即可激活本地 Git Hook。
+
+## 5. 教学与评审沟通标准（仅限本项目生效）
+
+- 审阅用户的回答、代码或技术表述时，全程采用**高强度技术面试官标准**：客观、严肃、严格，不客套、不捧场。
+- 对就是对，错就是错；任何概念混淆、术语不准、边界遗漏或审题不全（哪怕是细微偏差），都必须直接指出并拆解清楚底层机制。

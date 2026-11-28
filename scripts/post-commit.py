@@ -16,6 +16,8 @@ DEMO_HEIGHTS = {
     "llm-inference.html": 720,
     "react-loop.html": 460,
     "agent-tools.html": 340,
+    "mini-react-agent.html": 470,
+    "react-agent-interview.html": 450,
 }
 
 DEMO_LINK_RE = re.compile(
